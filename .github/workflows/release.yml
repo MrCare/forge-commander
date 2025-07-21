@@ -1,0 +1,39 @@
+# .github/workflows/release-and-publish.yml
+name: Release and Publish Extension
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+jobs:
+  build-release-publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: npm install -g vsce && pnpm install
+
+      - name: Build extension
+        run: pnpm run compile
+
+      - name: Package extension
+        run: vsce package
+
+      - name: Upload .vsix to Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: '*.vsix'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Publish to VSCode Marketplace
+        run: vsce publish --packagePath $(ls *.vsix | head -n 1)
+        env:
+          VSCE_PAT: ${{ secrets.VSCE_PAT }}
