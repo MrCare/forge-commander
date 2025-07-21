@@ -1,18 +1,21 @@
 {
-  "name": "forge-deploy",
-  "displayName": "forge deploy",
+  "name": "forge-commander",
+  "displayName": "forge commander",
   "description": "deploy contract easily with forge",
-  "version": "0.0.1",
+  "publisher": "MrCar",
+  "version": "0.0.3",
   "engines": {
-    "vscode": "^1.60.0"
+    "vscode": "^1.75.0"
   },
   "categories": [
     "Other"
   ],
-  "activationEvents": [
-    "*"
-  ],
   "main": "./dist/extension.js",
+  "activationEvents": [
+    "onCommand:forge-deploy.helloWorld",
+    "onCommand:forge-deploy.deployContract",
+    "onCommand:forge-deploy.executeScript"
+  ],
   "contributes": {
     "commands": [
       {
@@ -20,17 +23,28 @@
         "title": "Hello World"
       },
       {
-        "command": "forge-deploy.executeScript",
-        "title": "执行自定义脚本",
+        "command": "forge-deploy.deployContract",
+        "title": "部署智能合约",
+        "category": "Forge Deploy"
+      },
+      {
+        "command": "forge-deploy.clearTerminal",
+        "title": "清理 Forge 终端",
         "category": "Forge Deploy"
       }
     ],
     "menus": {
       "explorer/context": [
         {
-          "command": "forge-deploy.executeScript",
-          "when": "!explorerResourceIsFolder",
-          "group": "navigation"
+          "command": "forge-deploy.deployContract",
+          "when": "resourceExtname == .sol",
+          "group": "navigation@1"
+        }
+      ],
+      "commandPalette": [
+        {
+          "command": "forge-deploy.clearTerminal",
+          "when": "true"
       }
     ]
     }
@@ -50,7 +64,7 @@
     "test": "vscode-test"
   },
   "devDependencies": {
-    "@types/vscode": "^1.102.0",
+    "@types/vscode": "^1.75.0",
     "@types/mocha": "^10.0.10",
     "@types/node": "20.x",
     "@typescript-eslint/eslint-plugin": "^8.31.1",
@@ -61,5 +75,10 @@
     "typescript": "^5.8.3",
     "@vscode/test-cli": "^0.0.11",
     "@vscode/test-electron": "^2.5.2"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/MrCare/forge-commander"
+  },
+  "icon": "icon.png"
 }

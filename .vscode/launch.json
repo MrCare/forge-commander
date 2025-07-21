@@ -6,7 +6,27 @@
 	"version": "0.2.0",
 	"configurations": [
 		{
-			"name": "Run Extension",
+			"name": "Run Extension (Auto Reload)",
+			"type": "extensionHost",
+			"request": "launch",
+			"args": [
+				"--extensionDevelopmentPath=${workspaceFolder}",
+				"--extensionDevelopmentKind=ui"
+			],
+			"outFiles": [
+				"${workspaceFolder}/dist/**/*.js"
+			],
+			"preLaunchTask": "watch",
+			"skipFiles": [
+				"<node_internals>/**"
+			],
+			"console": "integratedTerminal",
+			"env": {
+				"VSCODE_DEBUG_MODE": "true"
+			}
+		},
+		{
+			"name": "Run Extension (Manual)",
 			"type": "extensionHost",
 			"request": "launch",
 			"args": [
