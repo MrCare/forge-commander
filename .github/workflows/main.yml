@@ -21,7 +21,7 @@ jobs:
           node-version: '24'
 
       - name: Install dependencies
-        run: npm install -g @vscode/vsce && npm install -g pnpm && pnpm install --no-frozen-lockfile
+        run: npm install -g @vscode/vsce ovsx && npm install -g pnpm && pnpm install --no-frozen-lockfile
 
       - name: Build extension
         run: pnpm run compile
@@ -40,3 +40,6 @@ jobs:
         run: vsce publish --packagePath $(ls *.vsix | head -n 1)
         env:
           VSCE_PAT: ${{ secrets.VSCE_PAT }}
+
+      - name: Publish to Open VSX Registry
+        run: ovsx publish --packagePath $(ls *.vsix | head -n 1) --pat ${{ secrets.VSX_TOKEN }}
