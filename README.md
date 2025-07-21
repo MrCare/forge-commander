@@ -36,6 +36,8 @@
 1. 安装依赖：`pnpm install`
 2. 编译项目：`pnpm run compile`
 3. 按 F5 启动 VSCode 扩展开发主机进行本地调试
+> owner 打包: `pnpx vsce package`
+> owner 部署: `pnpx vsce publish`
 
 如需要提交BUG修改或新特性开发，请通过 Pull Request（PR）方式提交。
 
