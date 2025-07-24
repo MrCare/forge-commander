@@ -54,16 +54,7 @@
 
 ---
 
-## Changelog
-
-### 0.0.3
-- 初始版本：支持一键部署合约、账户/网络/参数交互选择、合约验证和广播选项
-- 完善文档
-- 支持 .github workflow CICD
-
----
-
-## ToDo List
+# ToDo List
 
 - [ ] 中英文双语文档
 - [ ] 国际化（i18n）支持
@@ -71,3 +62,23 @@
 - [ ] 能够自行配置rpc-url等关键参数
 - [ ] 扩展目前 keystore 账户的管理方式，增加 secrect-key 的支持
 - [ ] 扩展 test 和 script
+
+---
+
+# Changelog
+
+## [0.0.3] - 2025-07-21
+
+### Added
+
+- 初始版本：支持一键部署合约、账户/网络/参数交互选择、合约验证和广播选项
+- 完善文档
+- 支持 .github workflow CICD
+
+## [0.0.4] - 2025-07-24
+
+### Added
+
+- 将图标更换为透明背景
+- 完善文档format changelog 格式
+- 支持 TSX平台上的 .github workflow CICD
