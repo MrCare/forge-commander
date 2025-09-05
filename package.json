@@ -3,7 +3,7 @@
   "displayName": "forge commander",
   "description": "deploy contract easily with forge",
   "publisher": "MrCar",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "engines": {
     "vscode": "^1.75.0"
   },
@@ -14,7 +14,8 @@
   "activationEvents": [
     "onCommand:forge-deploy.helloWorld",
     "onCommand:forge-deploy.deployContract",
-    "onCommand:forge-deploy.executeScript"
+    "onCommand:forge-deploy.executeScript",
+    "onCommand:forge-deploy.inspectContract"
   ],
   "contributes": {
     "commands": [
@@ -25,6 +26,11 @@
       {
         "command": "forge-deploy.deployContract",
         "title": "部署智能合约",
+        "category": "Forge Deploy"
+      },
+      {
+        "command": "forge-deploy.inspectContract",
+        "title": "生成合约 ABI JSON",
         "category": "Forge Deploy"
       },
       {
@@ -39,6 +45,11 @@
           "command": "forge-deploy.deployContract",
           "when": "resourceExtname == .sol",
           "group": "navigation@1"
+        },
+        {
+          "command": "forge-deploy.inspectContract",
+          "when": "resourceExtname == .sol",
+          "group": "navigation@2"
         }
       ],
       "commandPalette": [

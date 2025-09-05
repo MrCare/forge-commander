@@ -119,6 +119,12 @@ export function activate(context: vscode.ExtensionContext) {
         const filePath = uri.fsPath;
         const fileName = path.basename(filePath);
         
+        // 检查是否为测试或脚本文件
+        if (fileName.endsWith('.t.sol') || fileName.endsWith('.s.sol')) {
+            vscode.window.showWarningMessage('测试文件(.t.sol)和脚本文件(.s.sol)不支持部署操作');
+            return;
+        }
+        
         try {
             // 1. 搜索文件中的合约
             vscode.window.showInformationMessage(`🔍 正在搜索文件 "${fileName}" 中的合约...`);
@@ -255,6 +261,105 @@ export function activate(context: vscode.ExtensionContext) {
         }
     });
     
+    // 注册生成合约ABI JSON命令
+    const inspectContractDisposable = vscode.commands.registerCommand('forge-deploy.inspectContract', async (uri: vscode.Uri) => {
+        console.log('生成合约ABI JSON命令被触发，URI:', uri);
+        
+        if (!uri) {
+            vscode.window.showErrorMessage('无法获取文件路径');
+            return;
+        }
+
+        const filePath = uri.fsPath;
+        const fileName = path.basename(filePath);
+        const fileDir = path.dirname(filePath);
+        
+        // 检查是否为测试或脚本文件
+        if (fileName.endsWith('.t.sol') || fileName.endsWith('.s.sol')) {
+            vscode.window.showWarningMessage('测试文件(.t.sol)和脚本文件(.s.sol)不支持ABI生成操作');
+            return;
+        }
+        
+        try {
+            // 1. 搜索文件中的合约
+            vscode.window.showInformationMessage(`🔍 正在搜索文件 "${fileName}" 中的合约...`);
+            const contracts = await _findContractsInFile(filePath);
+            
+            if (contracts.length === 0) {
+                vscode.window.showErrorMessage('在文件中未找到任何合约');
+                return;
+            }
+            
+            // 2. 选择合约
+            const contractNames = contracts.map(c => `${c.name} (${c.file}:${c.line})`);
+            const selectedContract = await vscode.window.showQuickPick(contractNames, {
+                placeHolder: '选择要生成ABI的合约'
+            });
+            
+            if (!selectedContract) {
+                return;
+            }
+            
+            const contractName = selectedContract.split(' ')[0];
+            
+            // 3. 输入输出文件名
+            const defaultFileName = `${contractName}_abi.json`;
+            const outputFileName = await vscode.window.showInputBox({
+                prompt: '输入ABI JSON文件名',
+                value: defaultFileName,
+                placeHolder: '例如: MyContract_abi.json'
+            });
+            
+            if (!outputFileName) {
+                return;
+            }
+            
+            // 4. 构建inspect命令
+            const outputPath = path.join(fileDir, outputFileName);
+            
+            // 获取工作区根目录
+            const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
+            if (!workspaceFolder) {
+                vscode.window.showErrorMessage('无法获取工作区根目录');
+                return;
+            }
+            
+            // 计算相对于工作区根目录的路径
+            const relativePath = path.relative(workspaceFolder.uri.fsPath, filePath);
+            
+            // 构建forge inspect命令，使用相对路径格式 src/ContractName
+            const inspectCommand = `forge inspect ${relativePath}:${contractName} abi --json > "${outputFileName}"`;
+            
+            // 5. 确认生成
+            const confirmPick = await vscode.window.showQuickPick(
+                [
+                    { label: '确认生成', value: true },
+                    { label: '取消', value: false }
+                ],
+                { placeHolder: `确认为合约 "${contractName}" 生成ABI JSON文件？` }
+            );
+
+            if (confirmPick && confirmPick.value) {
+                if (!forgeTerminal) {
+                    forgeTerminal = vscode.window.createTerminal({
+                        name: 'Forge Deploy Terminal',
+                        cwd: workspaceFolder.uri.fsPath
+                    });
+                }
+                
+                forgeTerminal.show();
+                forgeTerminal.sendText(inspectCommand);
+
+                vscode.window.showInformationMessage(
+                    `📄 ABI JSON生成命令已发送，文件将保存为: ${outputFileName}`
+                );
+            }
+            
+        } catch (error) {
+            vscode.window.showErrorMessage(`生成ABI JSON过程中发生错误: ${error}`);
+        }
+    });
+    
     // 注册执行脚本命令
     const executeScriptDisposable = vscode.commands.registerCommand('forge-deploy.executeScript', async (uri: vscode.Uri) => {
         console.log('执行脚本命令被触发，URI:', uri);
@@ -327,6 +432,7 @@ export function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(
         helloWorldDisposable, 
         deployContractDisposable,
+        inspectContractDisposable,
         executeScriptDisposable, 
         clearTerminalDisposable
     );

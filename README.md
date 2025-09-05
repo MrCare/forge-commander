@@ -81,4 +81,10 @@
 
 - 将图标更换为透明背景
 - 完善文档format changelog 格式
-- 支持 TSX平台上的 .github workflow CICD
+- 支持 TSX平台上的 .github workflow 
+
+## [0.0.5] - 2025-09-05
+
+### Added
+
+- 支持通过右键单击合约文件 inspect 生成合约abi文件
